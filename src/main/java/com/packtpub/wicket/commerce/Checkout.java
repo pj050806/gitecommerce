@@ -5,9 +5,14 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import promocode.promoManager;
 
 public class Checkout extends CheesrPage {
+    private TextField field;
+    private ShoppingCartPanel shopcartpanel = new ShoppingCartPanel("cart", getCart());
+    
   public Checkout() {
     add(new FeedbackPanel("feedback"));
     Form form = new Form("form");
@@ -40,8 +45,34 @@ public class Checkout extends CheesrPage {
 
         // return to front page
         setResponsePage(Index.class);
+        System.out.println("Order submited");
       }
     });
-    add(new ShoppingCartPanel("cart", getCart()));
+    add(shopcartpanel);
+    Form f = new Form("promo-form");
+    add(f);
+    field = new TextField("promo", new Model(""));
+    f.add(field);
+    
+    f.add(new Button("promo_btn") {
+        @Override
+        public void onSubmit() {
+            System.out.println("Method Promo Btn.");
+            String promo = (String)field.getModelObject();            
+            
+            if(promo == null || promo.isEmpty()) {
+                System.out.print("Empty Promo Field");                
+            }else{
+                System.out.println(promo);                
+                double erg;                
+                    erg = promoManager.calcsaleprice(getCart().getTotal(), promo);
+                    shopcartpanel.setTotal(erg);
+                                
+            }
+            
+        }
+    });
+    
+    
   }
 }
