@@ -15,6 +15,8 @@
  */
 package promocode;
 
+import com.pentasys.moneypattern.Money;
+import com.pentasys.moneypattern.differentCurrencyException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,14 +31,29 @@ public class promoManager {
         return promocodes.contains(s);
     }
     
-    public static double calcsaleprice(double price, String promo) {
-        double erg=price;
-        if(promo.equals(promocodes.get(0)))
-            erg = price-2.99;
-        else if(promo.equals(promocodes.get(1)))
-            erg = price*0.85;
-        else if(promo.equals(promocodes.get(2)))
-            erg = price/2;
-        return erg;
+    public static String calcsaleprice(double price, String promo) throws differentCurrencyException {
+        Money Price = new Money(price);
+        int erg = 0;
+        
+        if(promo.equals(promocodes.get(0))) {            
+                //erg = price-0.99;
+                erg = Price.sub(new Money(99));
+                
+        } else if(promo.equals(promocodes.get(1))) {
+            //erg = price*0.85;            
+            erg = Price.mul(new Money(85));
+            Money temp = new Money(erg);
+            erg = temp.div(new Money(100));
+            
+        } else if(promo.equals(promocodes.get(2))) {
+            //erg = price/2;
+            erg = Price.div(new Money(2));
+            
+        } else {
+            erg = Price.getAmount();
+        }
+        Money Erg = new Money(erg);
+        System.out.println(Erg.printAmount());
+        return Erg.printAmount();
     }
 }

@@ -1,5 +1,8 @@
 package com.packtpub.wicket.commerce;
 
+import com.pentasys.moneypattern.differentCurrencyException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
@@ -64,9 +67,14 @@ public class Checkout extends CheesrPage {
                 System.out.print("Empty Promo Field");                
             }else{
                 System.out.println(promo);                
-                double erg;                
+                String erg;
+                try {
                     erg = promoManager.calcsaleprice(getCart().getTotal(), promo);
                     shopcartpanel.setTotal(erg);
+                } catch (differentCurrencyException ex) {
+                    Logger.getLogger(Checkout.class.getName()).log(Level.SEVERE, null, ex);
+                    System.out.println("Money Exception in Chekout OnSubmit promo_btn");
+                }
                                 
             }
             
