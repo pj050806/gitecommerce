@@ -1,7 +1,11 @@
 package com.packtpub.wicket.commerce;
 
+import com.pentasys.moneypattern.Money;
+import com.pentasys.moneypattern.differentCurrencyException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Cart implements java.io.Serializable {
   private List<Cheese> cheeses = new ArrayList<Cheese>();
@@ -26,9 +30,16 @@ public class Cart implements java.io.Serializable {
 
   public double getTotal() {
     double total = 0;
-    for (Cheese cheese : cheeses) {
-      total += cheese.getPrice();
+    Money t = new Money(0);
+    for (Cheese cheese : cheeses) {        
+        Money m = new Money(cheese.getPrice());
+        try {
+            t.add(m);
+            //total += cheese.getPrice();
+        } catch (differentCurrencyException ex) {
+            Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-    return total;
+    return Double.parseDouble(t.printAmount());
   }
 }
